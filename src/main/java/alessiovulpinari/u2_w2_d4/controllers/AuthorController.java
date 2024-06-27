@@ -1,10 +1,15 @@
 package alessiovulpinari.u2_w2_d4.controllers;
 
 import alessiovulpinari.u2_w2_d4.entities.Author;
+import alessiovulpinari.u2_w2_d4.exceptions.BadRequestException;
+import alessiovulpinari.u2_w2_d4.records.AuthorRecord;
+import alessiovulpinari.u2_w2_d4.records.AuthorResponseRecord;
 import alessiovulpinari.u2_w2_d4.services.AuthorService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
+import org.springframework.validation.BindingResult;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.UUID;
@@ -23,8 +28,9 @@ public class AuthorController {
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public Author saveAuthor(@RequestBody Author body) {
-        return authorService.save(body);
+    public AuthorResponseRecord saveAuthor(@RequestBody @Validated AuthorRecord body, BindingResult bindingResult) {
+        if (bindingResult.hasErrors()) throw new BadRequestException(bindingResult.getAllErrors());
+        return new AuthorResponseRecord(authorService.save(body).getAuthorId());
     }
 
     @GetMapping("/{authorId}")

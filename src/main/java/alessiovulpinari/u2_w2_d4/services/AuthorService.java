@@ -3,6 +3,7 @@ package alessiovulpinari.u2_w2_d4.services;
 import alessiovulpinari.u2_w2_d4.entities.Author;
 import alessiovulpinari.u2_w2_d4.exceptions.BadRequestException;
 import alessiovulpinari.u2_w2_d4.exceptions.NotFoundException;
+import alessiovulpinari.u2_w2_d4.records.AuthorRecord;
 import alessiovulpinari.u2_w2_d4.repositories.AuthorRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -24,17 +25,19 @@ public class AuthorService {
         return authorRepository.findAll(pageable);
     }
 
-    public Author save(Author newAuthor) {
+    public Author save(AuthorRecord record) {
 
-        this.authorRepository.findByNameAndSurname(newAuthor.getName(), newAuthor.getSurname()).ifPresent(
+        this.authorRepository.findByNameAndSurname(record.name(), record.surname()).ifPresent(
                 author -> {
                     throw new BadRequestException("Esiste già un autore con nome e cognome: "
-                            + newAuthor.getName() + " " + newAuthor.getSurname());
+                            + record.name() + " " + record.surname());
                 }
         );
 
-        newAuthor.setAvatarUrl("https://ui-avatars.com/api/?name=" + newAuthor.getName() + "+"
-                + newAuthor.getSurname());
+        Author newAuthor = new Author(record.name(), record.surname(), record.email(), record.dateOfBirth());
+
+        newAuthor.setAvatarUrl("https://ui-avatars.com/api/?name=" + record.name() + "+"
+                + record.surname());
 
         return authorRepository.save(newAuthor);
     }
