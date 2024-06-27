@@ -5,12 +5,16 @@ import alessiovulpinari.u2_w2_d4.exceptions.BadRequestException;
 import alessiovulpinari.u2_w2_d4.exceptions.NotFoundException;
 import alessiovulpinari.u2_w2_d4.records.AuthorRecord;
 import alessiovulpinari.u2_w2_d4.repositories.AuthorRepository;
+import com.cloudinary.Cloudinary;
+import com.cloudinary.utils.ObjectUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.util.UUID;
 
 @Service
@@ -18,6 +22,9 @@ public class AuthorService {
 
     @Autowired
     private AuthorRepository authorRepository;
+
+    @Autowired
+    private Cloudinary cloudinaryUploader;
 
     public Page<Author> getAuthors(int pageNumber, int pageSize) {
 
@@ -60,5 +67,16 @@ public class AuthorService {
     public void findByIdAndDelete(UUID authorId) {
         Author foundAuthor = findById(authorId);
         this.authorRepository.delete(foundAuthor);
+    }
+
+    public String uploadAvatar(MultipartFile file) throws IOException {
+        return (String) cloudinaryUploader.uploader().upload(file.getBytes(), ObjectUtils.emptyMap()).get("url");
+    }
+
+    public Author patchAvatar(UUID authorId, String avatarUrl) {
+        Author author = findById(authorId);
+        author.setAvatarUrl(avatarUrl);
+
+        return this.authorRepository.save(author);
     }
 }

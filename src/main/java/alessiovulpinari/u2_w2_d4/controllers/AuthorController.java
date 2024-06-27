@@ -11,7 +11,9 @@ import org.springframework.http.HttpStatus;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.util.UUID;
 
 @RestController
@@ -47,6 +49,14 @@ public class AuthorController {
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void findByIdAndDelete(@PathVariable UUID authorId) {
         authorService.findByIdAndDelete(authorId);
+    }
+
+
+    @PatchMapping("/{authorId}/avatar")
+    public Author uploadAvatar(@PathVariable UUID authorId, @RequestParam("avatar") MultipartFile image) throws IOException {
+        String url = authorService.uploadAvatar(image);
+        return this.authorService.patchAvatar(authorId, url);
+
     }
 
 }
