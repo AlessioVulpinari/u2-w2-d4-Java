@@ -2,7 +2,6 @@ package alessiovulpinari.u2_w2_d4.records;
 
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.Size;
 
 import java.time.LocalDate;
@@ -21,6 +20,5 @@ public record AuthorRecord(
         @Email(message = "Formato mail errato!")
         String email,
 
-        @NotEmpty
         LocalDate dateOfBirth) {
 }

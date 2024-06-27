@@ -19,7 +19,7 @@ public class ExceptionsHandler {
     public ErrorsPayload handleBadRequest(BadRequestException e) {
 
         if (e.getObjectErrorList() != null) {
-            String message = e.getObjectErrorList().stream().map(DefaultMessageSourceResolvable::getDefaultMessage).collect(Collectors.joining());
+            String message = e.getObjectErrorList().stream().map(DefaultMessageSourceResolvable::getDefaultMessage).collect(Collectors.joining(" "));
             return new ErrorsPayload(message, LocalDateTime.now());
         } else {
             return new ErrorsPayload(e.getMessage(), LocalDateTime.now());
